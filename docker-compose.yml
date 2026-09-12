@@ -1,0 +1,44 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: careerpilot
+      POSTGRES_PASSWORD: careerpilot
+      POSTGRES_DB: careerpilot
+    ports:
+      - "${CAREERPILOT_POSTGRES_HOST_PORT:-5432}:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U careerpilot -d careerpilot"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      CAREERPILOT_ENV: production
+      CAREERPILOT_HTTP_ADDR: ":8080"
+      CAREERPILOT_DATABASE_URL: postgres://careerpilot:careerpilot@postgres:5432/careerpilot?sslmode=disable
+      CAREERPILOT_LOG_LEVEL: info
+      CAREERPILOT_LIMIT_JOBS_DISCOVERED_PER_DAY: "100"
+      CAREERPILOT_LIMIT_DEEP_EVALUATIONS_PER_DAY: "30"
+      CAREERPILOT_LIMIT_APPLICATIONS_PER_DAY: "15"
+      CAREERPILOT_LIMIT_BROWSER_SESSIONS_PER_DAY: "10"
+      CAREERPILOT_LIMIT_MAX_RETRIES_PER_APPLICATION: "2"
+      CAREERPILOT_LIMIT_MAX_SESSION_MINUTES: "30"
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+    ports:
+      - "${CAREERPILOT_HOST_PORT:-8080}:8080"
+
+volumes:
+  postgres-data:

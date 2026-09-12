@@ -1,0 +1,11 @@
+.git
+.github
+.env
+*.md
+docs/
+tests/
+*.test
+coverage.*
+profile.cov
+.idea
+.vscode

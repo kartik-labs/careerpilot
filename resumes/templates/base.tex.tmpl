@@ -1,0 +1,57 @@
+\documentclass[10pt,a4paper]{article}
+\usepackage[margin=0.6in]{geometry}
+\usepackage{enumitem}
+\usepackage{titlesec}
+\usepackage{hyperref}
+\pagestyle{empty}
+
+\titleformat{\section}{\large\bfseries}{}{0em}{}[\titlerule]
+\titlespacing{\section}{0pt}{8pt}{4pt}
+\setlist[itemize]{leftmargin=1.2em, itemsep=1pt, topsep=2pt}
+
+\begin{document}
+
+\begin{center}
+    {\LARGE \textbf{<<.FullName>>}} \\[2pt]
+    <<.Email>> \textbar\ <<.Phone>> \textbar\ <<.Location>>
+    <<if .LinkedIn>> \textbar\ \href{<<.LinkedIn>>}{LinkedIn}<<end>>
+    <<if .GitHub>> \textbar\ \href{<<.GitHub>>}{GitHub}<<end>>
+\end{center}
+
+<<if .Summary>>
+\section*{Summary}
+<<.Summary>>
+<<end>>
+
+<<if .Employment>>
+\section*{Experience}
+<<range .Employment>>
+\textbf{<<.Title>>}, <<.Company>> \hfill <<.DateRange>> \\
+\textit{<<.Location>>}
+\begin{itemize}
+<<range .Responsibilities>>\item <<.>>
+<<end>>\end{itemize}
+<<end>>
+<<end>>
+
+<<if .Projects>>
+\section*{Projects}
+<<range .Projects>>
+\textbf{<<.Name>>} --- <<.Description>> \\
+\textit{<<range $i, $t := .Technologies>><<if $i>>, <<end>><<$t>><<end>>>}
+<<end>>
+<<end>>
+
+<<if .Education>>
+\section*{Education}
+<<range .Education>>
+\textbf{<<.Degree>>, <<.FieldOfStudy>>}, <<.Institution>> \hfill <<.DateRange>>
+<<end>>
+<<end>>
+
+<<if .Skills>>
+\section*{Technical Skills}
+<<range $i, $s := .Skills>><<if $i>>, <<end>><<$s>><<end>>
+<<end>>
+
+\end{document}
